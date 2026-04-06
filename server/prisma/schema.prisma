@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(VIEWER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  records   FinancialRecord[]
+
+  @@index([email])
+}
+
+model FinancialRecord {
+  id          String      @id @default(uuid())
+  amount      Decimal     @db.Decimal(18, 2)
+  type        RecordType
+  category    String
+  date        DateTime    @default(now())
+  description String?
+  notes       String?     @db.Text
+  
+  // Relations
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // System Fields
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  deletedAt   DateTime?   // For soft deletes
+
+  // Indexes for summary and filtering performance
+  @@index([userId])
+  @@index([date])
+  @@index([category])
+  @@index([type])
+  @@index([userId, date]) // Composite for dashboard range filter
+}
+
+enum Role {
+  VIEWER
+  ANALYST
+  ADMIN
+}
+
+enum RecordType {
+  INCOME
+  EXPENSE
+}

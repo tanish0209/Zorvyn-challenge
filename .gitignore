@@ -1,0 +1,27 @@
+# Dependency
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Next.js
+client/.next/
+client/out/
+
+# Typescript
+*.tsbuildinfo
+client/next-env.d.ts
+
+# Build
+dist/
+server/dist/
+
+# Environment / Secret
+.env
+client/.env
+server/.env
+server/prisma/.env
+
+# Misc
+.DS_Store
+*.log
+.vercel
